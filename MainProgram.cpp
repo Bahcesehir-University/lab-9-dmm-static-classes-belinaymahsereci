@@ -94,26 +94,31 @@ public:
 
 // TODO 1: Initialize Tracker's static member variable
 // Hint: int Tracker::objectCount = ???;
+int Tracker::objectCount=0;
 
 
 // ================================================================
 // TRACKER FUNCTION IMPLEMENTATIONS
 // ================================================================
 
-void Tracker::objectCreated() {
+void Tracker::objectCreated(){
+    objectCount++;
     // TODO 2: Increment objectCount
 }
 
 void Tracker::objectDestroyed() {
+    objectCount--;
     // TODO 3: Decrement objectCount
 }
 
 int Tracker::getActiveCount() {
+    return objectCount;
     // TODO 4: Return objectCount
     return 0;
 }
 
 void Tracker::resetCount() {
+    objectCount=0;
     // TODO 5: Reset objectCount to 0
 }
 
@@ -123,6 +128,10 @@ void Tracker::resetCount() {
 
 // Constructor
 IntArray::IntArray(int cap) {
+    capacity=cap;
+    count=0;
+    data=new int[capacity];
+    Tracker::objectCreated();
     // TODO 6: Allocate dynamic array of size cap using 'new'
     //         Initialize capacity, count
     //         Notify Tracker that an object was created
@@ -131,6 +140,8 @@ IntArray::IntArray(int cap) {
 
 // Destructor
 IntArray::~IntArray() {
+delete[]data;
+Tracker::objectDestroyed();
     // TODO 7: Free the dynamic array using 'delete[]'
     //         Notify Tracker that an object was destroyed
 
@@ -138,6 +149,15 @@ IntArray::~IntArray() {
 
 // Copy Constructor
 IntArray::IntArray(const IntArray& other) {
+    capacity=other.capacity;
+    count=other.count;
+    data=new int[capacity];
+    
+    for (int i = 0; i < count; i++){
+        data[i] = other.data[i];
+    }
+    Tracker::objectCreated();
+    
     // TODO 8: Deep copy - allocate new memory and copy elements
     //         Don't forget to copy capacity and count
     //         Notify Tracker that an object was created
@@ -146,6 +166,16 @@ IntArray::IntArray(const IntArray& other) {
 
 // Copy Assignment Operator
 IntArray& IntArray::operator=(const IntArray& other) {
+    if(this!=&other){               
+        delete[] data;                
+        capacity = other.capacity;
+        count = other.count;
+        data = new int[capacity];       
+        for (int i = 0; i < count; i++)
+            data[i] = other.data[i];
+    }
+    return *this;
+}
     // TODO 9: Implement copy assignment
     //         1. Check for self-assignment (this != &other)
     //         2. Delete old memory
@@ -154,11 +184,16 @@ IntArray& IntArray::operator=(const IntArray& other) {
     //         5. Return *this
     //         NOTE: Do NOT call Tracker here (object already exists)
 
-    return *this;
-}
+   
+   
 
 // Add element
 bool IntArray::add(int value) {
+    if(count<capacity){
+        data[count]=value;
+        count++;
+        return true;
+    }
     // TODO 10: If count < capacity, add value at data[count],
     //          increment count, return true.
     //          Otherwise return false.
@@ -167,6 +202,9 @@ bool IntArray::add(int value) {
 
 // Get element at index
 int IntArray::get(int index) const {
+    if( 0<=index&& index<count){
+        return data[index];
+    }
     // TODO 11: If index is valid (0 <= index < count), return data[index].
     //          Otherwise return -1.
     return -1;
@@ -175,26 +213,35 @@ int IntArray::get(int index) const {
 // Size
 int IntArray::size() const {
     // TODO 12: Return count
-    return 0;
+    return count;
 }
 
 // Capacity
 int IntArray::getCapacity() const {
     // TODO 13: Return capacity
-    return 0;
+    return capacity;
 }
 
 // isEmpty
 bool IntArray::isEmpty() const {
+    return count==0;
+        
+    
     // TODO 14: Return true if count == 0
     return true;
 }
 
 // Remove last element
 bool IntArray::removeLast() {
+    if(count>0)
+    {
+        count--;
+        return true;
+    }
+     return false;
     // TODO 15: If not empty, decrement count and return true.
     //          Otherwise return false.
-    return false;
+   
 }
 
 // ================================================================
